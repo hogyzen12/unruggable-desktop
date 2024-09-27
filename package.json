@@ -1,0 +1,69 @@
+{
+  "name": "unruggable-desktop",
+  "version": "1.0.0",
+  "description": "Your app description",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.31.0",
+    "axios": "^0.21.1",
+    "bs58": "^4.0.1",
+    "decimal.js": "^10.2.1",
+    "electron-store": "^8.1.0"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.yourdomain.unruggable-desktop",
+    "productName": "Unruggable Desktop",
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+    ],
+    "mac": {
+      "category": "public.app-category.finance",
+      "icon": "icons/icon.icns"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "msi"
+      ],
+      "icon": "icons/icon.ico"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "AppImage"
+      ],
+      "category": "Finance",
+      "icon": "icons/icon.png"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "author": "Your Name",
+  "license": "ISC"
+}

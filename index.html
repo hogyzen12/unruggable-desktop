@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unruggable</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f4;
+            --text-color: #333;
+            --primary-color: #ff6600;
+            --secondary-color: #e0e0e0;
+        }
+
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #f4f4f4;
+            --primary-color: #ff6600;
+            --secondary-color: #2c2c2c;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0;
+            padding: 0;
+        }
+
+        #app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        #sidebar {
+            width: 200px;
+            background-color: var(--secondary-color);
+            padding: 20px;
+        }
+
+        #content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .tab-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .tab-button:hover, .tab-button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        input, select, button {
+            margin: 10px 0;
+            padding: 5px;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+        }
+
+        #dark-mode-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #wallet-balances table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #wallet-balances th, #wallet-balances td {
+            border: 1px solid var(--primary-color);
+            padding: 8px;
+            text-align: left;
+        }
+
+        #wallet-balances th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        #wallet-balances tr:nth-child(even) {
+            background-color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <button id="dark-mode-toggle">Toggle Dark Mode</button>
+
+    <div id="app">
+        <div id="sidebar">
+            <button class="tab-button" data-tab="home">HOME</button>
+            <button class="tab-button" data-tab="transact">TRANSACT</button>
+            <button class="tab-button" data-tab="calypso">CALYPSO</button>
+        </div>
+
+        <div id="content">
+            <div id="home" class="tab-content active">
+                <h1>Solana Wallet</h1>
+
+                <div>
+                    <label for="network-select">Select Network:</label>
+                    <select id="network-select" onchange="window.updateConnection(); window.toggleCustomRpcContainer();">
+                        <option value="mainnet">Mainnet</option>
+                        <option value="devnet">Devnet</option>
+                        <option value="custom">Custom RPC</option>
+                    </select>
+                </div>
+
+                <div id="custom-rpc-container" style="display: none;">
+                    <label for="custom-rpc-url">Custom RPC URL:</label>
+                    <input type="text" id="custom-rpc-url">
+                </div>
+
+                <button id="generate-keypair">Generate New Keypair</button>
+
+                <div>
+                    <label for="privateKeyInput">Import Private Key:</label>
+                    <input type="text" id="privateKeyInput">
+                    <button id="import-private-key">Import</button>
+                </div>
+
+                <div>
+                    <label for="wallet-name">Wallet Name:</label>
+                    <input type="text" id="wallet-name">
+                    <button id="save-wallet">Save Wallet</button>
+                </div>
+
+                <div>
+                    <label for="saved-wallets">Load Saved Wallet:</label>
+                    <select id="saved-wallets"></select>
+                    <button id="load-wallet">Load</button>
+                    <button id="delete-wallet">Delete</button>
+                </div>
+
+                <p>Public Key: <span id="publicKeyDisplay">N/A</span></p>
+
+                <div id="wallet-balances"></div>
+                <div id="wallet-list"></div>
+            </div>
+            <div id="transact" class="tab-content">
+                <h2>Send Transaction</h2>
+                <div>
+                    <label for="destination-wallet">Destination Wallet:</label>
+                    <input type="text" id="destination-wallet">
+                </div>
+                <div>
+                    <label for="amount">Amount (SOL):</label>
+                    <input type="number" id="amount" step="0.000000001">
+                </div>
+                <div id="destination-balances"></div>
+                <button id="send-transaction">Send Transaction</button>
+                <div id="loading-spinner" style="display: none;">Loading...</div>
+                <div id="transaction-status" class="status-loading">Transaction Status: N/A</div>
+            </div>
+            <div id="calypso" class="tab-content">
+                <h2>Calypso Bot Control</h2>
+                <div>
+                    <label for="rpc-endpoint">RPC Endpoint:</label>
+                    <input type="text" id="rpc-endpoint" value="https://mainnet.helius-rpc.com/?api-key=5adcfebf-b520-4bcd-92ee-b4861e5e7b5b">
+                </div>
+                <div>
+                    <label for="rebalance-threshold">Rebalance Threshold:</label>
+                    <input type="number" id="rebalance-threshold" value="0.0042" step="0.0001">
+                </div>
+                <div>
+                    <label for="check-interval">Check Interval (seconds):</label>
+                    <input type="number" id="check-interval" value="420">
+                </div>
+                <div>
+                    <label for="stash-threshold">Stash Threshold (USD):</label>
+                    <input type="number" id="stash-threshold" value="10" step="0.1">
+                </div>
+                <div>
+                    <label for="stash-amount">Stash Amount (USD):</label>
+                    <input type="number" id="stash-amount" value="0.1" step="0.01">
+                </div>
+                <div>
+                    <label for="stash-address">Stash Address:</label>
+                    <input type="text" id="stash-address">
+                </div>
+                <button id="start-bot">Start Bot</button>
+                <button id="stop-bot">Stop Bot</button>
+                <div id="bot-output" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-top: 10px;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="renderer.js" defer></script>
+</body>
+</html>
